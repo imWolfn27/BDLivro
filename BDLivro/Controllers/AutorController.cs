@@ -1,6 +1,17 @@
-﻿namespace BDLivro.Controllers
+﻿using Microsoft.AspNetCore.Mvc;
+using BDLivro.Models;
+
+namespace BDLivro.Controllers
 {
-    public class AutorController
+    /*[ApiController]
+    [Route("api/Autor")]
+    public class AutorController : ControllerBase
     {
-    }
+        private IServicoAutor _servicoAutor;
+
+        public AutorController(IServicoAutor servicoAutor) 
+        { 
+            _servicoAutor = servicoAutor;
+        }
+    }*/
 }

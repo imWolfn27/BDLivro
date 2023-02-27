@@ -49,11 +49,11 @@ Livros LivroInfo = new Livros()
 
 
 context.Add(AutorInfo);
-context.Add(LivroInfo);
+context.Add(LivroInfo);*/
 
-context.SaveChanges();*/
+context.SaveChanges();
 
-var livros = context.Livros
+/*var livros = context.Livros
     .Where(l => l.precoLivro > (decimal)10.99)
     .OrderBy(l => l.nomeLivro);
 
@@ -66,5 +66,5 @@ foreach (Livros l in livros)
     Console.WriteLine($"AutorID: {l.AutorId}");
     Console.WriteLine($"Apagado? {l.Apagado}");
     Console.WriteLine(new string ('-', 20));
-}
+}*/
 
