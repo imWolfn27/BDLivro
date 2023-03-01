@@ -9,7 +9,7 @@ namespace BDLivro.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=(LocalDb)\MSSQLLOCALDB");
+            optionsBuilder.UseSqlServer(@"Data Source=(LocalDb)\MSSQLLOCALDB;Initial Catalog=BDLivros;Integrated Security=True");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

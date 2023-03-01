@@ -1,4 +1,4 @@
-/*var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -22,12 +22,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();*/
+app.Run();
 
-using BDLivro.Data;
+/*using BDLivro.Data;
 using BDLivro.Models;
 
-using LivrosContexto context = new LivrosContexto();
+using LivrosContexto context = new LivrosContexto();*/
 
 
 
@@ -51,7 +51,7 @@ Livros LivroInfo = new Livros()
 context.Add(AutorInfo);
 context.Add(LivroInfo);*/
 
-context.SaveChanges();
+//context.SaveChanges();
 
 /*var livros = context.Livros
     .Where(l => l.precoLivro > (decimal)10.99)

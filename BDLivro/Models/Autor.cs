@@ -22,9 +22,6 @@ namespace BDLivro.Models
             this.Apagado = true;
         }
 
-        public static implicit operator Autor(int v)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
