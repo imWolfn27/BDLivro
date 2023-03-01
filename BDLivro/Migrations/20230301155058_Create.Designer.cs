@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BDLivro.Migrations
 {
     [DbContext(typeof(LivrosContexto))]
-    [Migration("20230224150135_Migrations")]
-    partial class Migrations
+    [Migration("20230301155058_Create")]
+    partial class Create
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

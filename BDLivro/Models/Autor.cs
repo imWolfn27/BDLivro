@@ -21,7 +21,5 @@ namespace BDLivro.Models
         {
             this.Apagado = true;
         }
-
-        
     }
 }

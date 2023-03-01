@@ -5,7 +5,7 @@
 namespace BDLivro.Migrations
 {
     /// <inheritdoc />
-    public partial class Migrations : Migration
+    public partial class Create : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,7 @@ namespace BDLivro.Migrations
                     isbn = table.Column<int>(type: "int", nullable: false),
                     nomeLivro = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     precoLivro = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    AutorId = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
+                    AutorId = table.Column<decimal>(type: "int", nullable: false),
                     Apagado = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
