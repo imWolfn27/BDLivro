@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BDLivro.Models;
-
+using BDLivro.Models.DTO;
+using BDLivro.Data;
 
 namespace BDLivro.Controllers
 {
@@ -17,21 +18,29 @@ namespace BDLivro.Controllers
         }
 
         [HttpGet(Name = "GetLivros")]
-        public IEnumerable<Livros> Get()
+        public IEnumerable<LivrosDTO> Get()
         {
-            List<Livros> Livros = new List<Livros> {
-            new Livros{
-                ID = 35,
-                isbn = 1111111112,
-                nomeLivro = "A saga do Leo",
-                precoLivro = (decimal)15.99,
-                AutorId = 32,
-                //Autor = ""
-            }
-            };
-            return Livros;
-             
+            if (LivrosContexto.livrosList.Any())
+                return (IEnumerable<LivrosDTO>)NotFound();
+            return LivrosContexto.livrosList;
         }
+
+        [HttpPost]
+
+        public Livros Add(livros)
+        {
+            Livros.CreateDate = DateTime.Now;
+            _livros.Livros.Add(livros);
+            bool issSaved = _livros.SaveChanges() > 0;
+            if (issSaved)
+            {
+                return livros;
+            }
+            return null;
+        }
+
+        [HttpDelete(Name = "DeleteLivros")]
+
     }
 }
 

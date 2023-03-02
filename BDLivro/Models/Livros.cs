@@ -33,5 +33,7 @@ namespace BDLivro.Models
         {
             this.Apagado = true;
         }
+
+        public DateTime CreateDate { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-/*var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -22,34 +22,35 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();*/
+app.Run();
 
-using BDLivro.Data;
-using BDLivro.Models;
+//using BDLivro.Data;
+//using BDLivro.Models;
 
-using LivrosContexto context = new LivrosContexto();
+//using LivrosContexto context = new LivrosContexto();
 
-Autor AutorInfo = new Autor()
-{
-    NomeAutor = "José"
-};
-
-
-
-Livros LivroInfo = new Livros()
-{          
-    isbn = 1111111111,
-    nomeLivro = "A saga da Virgem",
-    precoLivro = (decimal)15.99,
-    Autor = AutorInfo
-};
+//Autor AutorInfo = new Autor()
+//{
+//    NomeAutor = "João"
+//};
 
 
 
-context.Add(AutorInfo);
-context.Add(LivroInfo);
+//Livros LivroInfo = new Livros()
+//{          
+//    isbn = 1222222222,
+//    nomeLivro = "A saga de Peixes",
+//    precoLivro = (decimal)20.00,
+//    AutorId = 1
+//    //Autor = AutorInfo
+//};
 
-context.SaveChanges();
+
+
+//context.Add(AutorInfo);
+//context.Add(LivroInfo);
+
+//context.SaveChanges();
 
 /*var livros = context.Livros
     .Where(l => l.precoLivro > (decimal)10.99)
