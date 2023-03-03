@@ -26,13 +26,13 @@ namespace BDLivro.Models
         public Autor Autor { get; set; }
 
 
-        [DefaultValue(false)]
-        public bool Apagado { get; set; }
+        //[DefaultValue(false)]
+        //public bool Apagado { get; set; }
 
-        public void LivroApagado()
-        {
-            this.Apagado = true;
-        }
+        //public void LivroApagado()
+        //{
+        //    this.Apagado = true;
+        //}
 
         public DateTime CreateDate { get; set; }
     }

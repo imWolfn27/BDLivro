@@ -14,12 +14,12 @@ namespace BDLivro.Models
 
         public ICollection<Livros> Livro { get; set; }
 
-        [DefaultValue(false)]
-        public bool Apagado { get; set; }
+        //[DefaultValue(false)]
+        //public bool Apagado { get; set; }
 
-        public void AutorApagado()
-        {
-            this.Apagado = true;
-        }
+        //public void AutorApagado()
+        //{
+        //    this.Apagado = true;
+        //}
     }
 }
