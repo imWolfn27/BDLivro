@@ -1,14 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using BDLivro.Models;
 using BDLivro.Data;
 using BDLivro.Models.DTO;
 
 namespace BDLivro.Controllers
 {
-    [Route("api/Autor")]
+    [Route("api/AutorAPI")]
     [ApiController]
-    public class AutorController : ControllerBase
+    public class AutorAPIController : ControllerBase
     {
+        private readonly ApplicationBuilder _db;
+
+        public AutorAPIController(ApplicationBuilder db)
+        {
+            _db = db;
+        }    
+
         [HttpGet(Name = "GetAutor")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<AutorDTO>> GetAutor()

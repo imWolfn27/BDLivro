@@ -6,8 +6,8 @@ namespace BDLivro.Data
     {
         public static List<AutorDTO> autorList = new List<AutorDTO>
         {
-            new AutorDTO {Id = 1, NomeAutor = "João" },
-            new AutorDTO {Id = 2, NomeAutor = "José" }
+            new AutorDTO {Id = 1, NomeAutor = "João"},
+            new AutorDTO {Id = 2, NomeAutor = "José"}
         };
     }
 }

@@ -5,22 +5,21 @@ using BDLivro.Data;
 namespace BDLivro.Controllers
 {
 
-    [Route("api/Livro")]
+    [Route("api/LivroAPI")]
     [ApiController]
-    public class LivroController : ControllerBase
+    public class LivroAPIController : ControllerBase
     {
-        //private readonly ILogger<LivroController> _livros;
-
-        //public LivroController(ILogger<LivroController> livros)
-        //{
-        //    _livros = livros;
-        //}
+        private readonly ApplicationBuilder _db;
+        public LivroAPIController(ApplicationBuilder db)
+        {
+            _db = db;
+        }
 
         [HttpGet(Name = "GetLivros")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<LivrosDTO>> GetLivros()
         {
-            return Ok(LivrosData.livrosList);
+            return Ok(_db.Livros.ToList());
         }
 
         [HttpGet("{ID:int}", Name = "GetLivrosID")]
@@ -113,4 +112,3 @@ namespace BDLivro.Controllers
         }
     }
 }
-

@@ -14,6 +14,8 @@ namespace BDLivro.Models
 
         public ICollection<Livros> Livro { get; set; }
 
+        public DateTime CreateDate { get; set; }
+
         //[DefaultValue(false)]
         //public bool Apagado { get; set; }
 
