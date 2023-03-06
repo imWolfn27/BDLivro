@@ -1,5 +1,4 @@
 ﻿using BDLivro.Models;
-using BDLivro.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace BDLivro.Data
@@ -7,6 +6,7 @@ namespace BDLivro.Data
     public class LivrosContexto : DbContext
     {
         public DbSet<Livros> Livros { get; set; } = null!;
+        public DbSet<BDLivro.Models.Autor> Autor { get; set; } = default!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

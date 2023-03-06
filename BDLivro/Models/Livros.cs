@@ -25,7 +25,6 @@ namespace BDLivro.Models
 
         public Autor Autor { get; set; }
 
-        public DateTime CreateDate { get; set; }
 
         //[DefaultValue(false)]
         //public bool Apagado { get; set; }

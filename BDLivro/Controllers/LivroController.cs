@@ -1,32 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using BDLivro.Models.DTO;
+using BDLivro.Models;
 using BDLivro.Data;
 
 namespace BDLivro.Controllers
 {
 
-    [Route("api/LivroAPI")]
+    [Route("api/Livro")]
     [ApiController]
-    public class LivroAPIController : ControllerBase
+    public class LivroController : ControllerBase
     {
-        private readonly ApplicationBuilder _db;
-        public LivroAPIController(ApplicationBuilder db)
+        private readonly ILogger<LivroController> _livros;
+
+        public LivroController(ILogger<LivroController> livros)
         {
-            _db = db;
+            _livros = livros;
         }
 
         [HttpGet(Name = "GetLivros")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<LivrosDTO>> GetLivros()
+        public ActionResult<IEnumerable<Livros>> GetLivros()
         {
-            return Ok(_db.Livros.ToList());
+            return Ok(LivrosData.livrosList);
         }
 
         [HttpGet("{ID:int}", Name = "GetLivrosID")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<LivrosDTO> GetLivro(int ID)
+        public ActionResult<Livros> GetLivro(int ID)
         {
             if(ID == 0)
             {
@@ -45,28 +46,28 @@ namespace BDLivro.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<LivrosDTO> CreateLivros([FromBody]LivrosDTO livrosDTO)
+        public ActionResult<Livros> CreateLivros([FromBody]Livros livros)
         {
 
-            if (LivrosData.livrosList.FirstOrDefault(u => u.isbn == livrosDTO.isbn) != null)
+            if (LivrosData.livrosList.FirstOrDefault(u => u.isbn == livros.isbn) != null)
             {
                 ModelState.AddModelError("ErroLivroRepetido", "Já existe este Livro!!");
                 return BadRequest(ModelState);
             }
 
-            if (livrosDTO == null)
+            if (livros == null)
             {
-                return BadRequest(livrosDTO);
+                return BadRequest(livros);
             }
 
-            if (livrosDTO.ID > 0)
+            if (livros.ID > 0)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            livrosDTO.ID = LivrosData.livrosList.OrderByDescending(u => u.ID).FirstOrDefault().ID + 1;
-            LivrosData.livrosList.Add(livrosDTO);
+            livros.ID = LivrosData.livrosList.OrderByDescending(u => u.ID).FirstOrDefault().ID + 1;
+            LivrosData.livrosList.Add(livros);
 
-            return CreatedAtRoute("GetLivrosID", new { ID = livrosDTO.ID }, livrosDTO);
+            return CreatedAtRoute("GetLivrosID", new { ID = livros.ID }, livros);
         }
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -94,21 +95,30 @@ namespace BDLivro.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-        public IActionResult UpdateLivros(int ID, [FromBody] LivrosDTO livrosDTO)
+        public IActionResult UpdateLivros(int ID, [FromBody]Livros livros)
         {
-            if (livrosDTO == null || ID != livrosDTO.ID)
+            if(livros == null || ID != livros.ID )
+
             { return BadRequest(); }
 
-            var livros = LivrosData.livrosList.FirstOrDefault(u => u.ID == ID);
+            var livro = LivrosData.livrosList.FirstOrDefault(u => u.ID == ID);
 
-            livros.ID = livrosDTO.ID;
-            livros.isbn = livrosDTO.isbn;
-            livros.nomeLivro = livrosDTO.nomeLivro;
-            livros.precoLivro = livrosDTO.precoLivro;
-            livros.AutorId = livrosDTO.AutorId;
-            livros.Autor = livrosDTO.Autor;
+            livro.ID = livros.ID;
+            livro.isbn = livros.isbn;
+            livro.nomeLivro = livros.nomeLivro;
+            livro.precoLivro = livros.precoLivro;
+            livro.AutorId = livros.AutorId;
+            livro.Autor = livros.Autor;
 
             return NoContent();
         }
+
+        //[HttpPatch("{ID: int}", Name = "UpdatePartialLivros")]
+        //[ProducesResponseType(StatusCodes.Status204NoContent)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public IActionResult UpdatePartialLivros(int id, JsonPatchExtensions<LivroDTO> patchDTO)
+        //{
+
+        //}
     }
 }

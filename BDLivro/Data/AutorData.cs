@@ -1,13 +1,13 @@
-﻿using BDLivro.Models.DTO;
+﻿using BDLivro.Models;
 
 namespace BDLivro.Data
 {
     public class AutorData
     {
-        public static List<AutorDTO> autorList = new List<AutorDTO>
+        public static List<Autor> autorList = new List<Autor>
         {
-            new AutorDTO {Id = 1, NomeAutor = "João"},
-            new AutorDTO {Id = 2, NomeAutor = "José"}
+            new Autor {Id = 1, NomeAutor = "João"},
+            new Autor {Id = 2, NomeAutor = "José"}
         };
     }
 }
