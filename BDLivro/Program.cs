@@ -3,6 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<LivrosContexto>(options => options.UseSqlServer(@"Data Source=LENOVOESTAGIO\SQLEXPRESS;
+            Initial Catalog=BDLivroTeste;Integrated Security=True;
+            Connect Timeout=30;TrustServerCertificate=True;"));
+
 // Add services to the container.
 
 builder.Services.AddControllers().AddNewtonsoftJson();
@@ -24,6 +28,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
 
 app.Run();
 

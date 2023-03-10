@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BDLivro.Models;
 using BDLivro.Data;
+using Microsoft.EntityFrameworkCore;
+using BDLivro.DTO;
+using BDLivro.DTO.LivrosDTO;
+using BDLivro.DTO.AutorDTO;
 
 namespace BDLivro.Controllers
 {
@@ -9,110 +13,129 @@ namespace BDLivro.Controllers
     [ApiController]
     public class LivroController : ControllerBase
     {
-        private readonly ILogger<LivroController> _livros;
+        private readonly LivrosContexto _livros;
 
-        public LivroController(ILogger<LivroController> livros)
+        public LivroController(LivrosContexto context)
         {
-            _livros = livros;
+            _livros = context;
         }
 
-        [HttpGet(Name = "GetLivros")]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<Livros>> GetLivros()
+        public async Task<ActionResult<IEnumerable<GetLivrosDTO>>> GetLivro()
         {
-            return Ok(LivrosData.livrosList);
+            //Vai buscar as tables do GetAutorDTO e faz a transformação da entidade para construtor/construtoe para entidade
+            var Books = await _livros.Livros.ToListAsync();
+            var dtoLivros = Books.Select(t => new GetLivrosDTO(t.Id, t.isbn, t.nomeLivro, t.precoLivro, t.AutorId, t.Autor)).ToList();
+
+            return dtoLivros;
         }
 
-        [HttpGet("{ID:int}", Name = "GetLivrosID")]
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Livros> GetLivro(int ID)
+        public ActionResult<Livros> GetLivrosID(int id)
         {
-            if(ID == 0)
-            {
-                return BadRequest();
-            }
-            var livro = LivrosData.livrosList.FirstOrDefault(u => u.ID == ID);
+            var livro = _livros.Livros.Find(id);
 
-            if(livro == null)
+            //if (autor == 0)
+            //{
+            //    return BadRequest();
+            //}
+            //var autor = AutorData.autorList.FirstOrDefault(u => u.Id == id);
+
+            if (livro == null)
             {
                 return NotFound();
             }
             return Ok(livro);
         }
 
-        [HttpPost(Name = "CreateLivros")]
+        [HttpPost("CreateLivro")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Livros> CreateLivros([FromBody]Livros livros)
+        public async Task<ActionResult<Livros>> CreateLivro(CreateLivDTO autor)
         {
-
-            if (LivrosData.livrosList.FirstOrDefault(u => u.isbn == livros.isbn) != null)
+            if (_livros.Livros == null)
             {
-                ModelState.AddModelError("ErroLivroRepetido", "Já existe este Livro!!");
-                return BadRequest(ModelState);
+                return Problem("Entity set 'LivrosContexto.Autor' is null.");
             }
+            var Entity = autor.toEntity();
+            _livros.Livros.Add(Entity);
+            await _livros.SaveChangesAsync();
 
-            if (livros == null)
-            {
-                return BadRequest(livros);
-            }
-
-            if (livros.ID > 0)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-            livros.ID = LivrosData.livrosList.OrderByDescending(u => u.ID).FirstOrDefault().ID + 1;
-            LivrosData.livrosList.Add(livros);
-
-            return CreatedAtRoute("GetLivrosID", new { ID = livros.ID }, livros);
+            return CreatedAtAction("GetLivro", new { id = Entity.Id }, autor);
         }
 
+
+
+        [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpDelete("{ID:int}", Name = "DeleteLivros")]
-        
-        public IActionResult DeleteLivros(int ID)
+        public async Task<IActionResult> DeleteLivro(int id)
         {
-            if(ID == 0)
+            if (_livros.Livros == null)
+            {
+                return NotFound();
+            }
+            var livro = await _livros.Livros.FindAsync(id);
+            if (livro == null)
+            {
+                return NotFound();
+            }
+
+            _livros.Livros.Remove(livro);
+            await _livros.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
+        public async Task<IActionResult> UpdateLivro(int isbn, [FromBody]UpdateLivroDTO Livupdate )
+        {
+            var livro = await _livros.Livros.FindAsync(isbn);
+            if(isbn != Livupdate.isbn || Livupdate.isbn != 13 || Livupdate.precoLivro < 0 || Livupdate == null)
             {
                 return BadRequest();
             }
 
-            var livros = LivrosData.livrosList.FirstOrDefault(u => u.ID == ID);
-            if(livros == null)
+            livro.isbn = Livupdate.isbn;
+            livro.nomeLivro = Livupdate.nomeLivro;
+            livro.precoLivro = Livupdate.precoLivro;
+            livro.AutorId = Livupdate.AutorId;
+            livro.Autor = Livupdate.Autor;
+            _livros.Entry(livro).State = EntityState.Modified;
+
+            try
             {
-                return NotFound();
+                _livros.Livros.Update(livro);
+                await _livros.SaveChangesAsync();
             }
-            LivrosData.livrosList.Remove(livros);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!LivroExists(isbn))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
         }
-
-        [HttpPut("{ID:int}", Name = "UpdateLivros")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
-        public IActionResult UpdateLivros(int ID, [FromBody]Livros livros)
+        private bool LivroExists(int id)
         {
-            if(livros == null || ID != livros.ID )
-
-            { return BadRequest(); }
-
-            var livro = LivrosData.livrosList.FirstOrDefault(u => u.ID == ID);
-
-            livro.ID = livros.ID;
-            livro.isbn = livros.isbn;
-            livro.nomeLivro = livros.nomeLivro;
-            livro.precoLivro = livros.precoLivro;
-            livro.AutorId = livros.AutorId;
-            livro.Autor = livros.Autor;
-
-            return NoContent();
+            return (_livros.Livros?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-
         //[HttpPatch("{ID: int}", Name = "UpdatePartialLivros")]
         //[ProducesResponseType(StatusCodes.Status204NoContent)]
         //[ProducesResponseType(StatusCodes.Status400BadRequest)]

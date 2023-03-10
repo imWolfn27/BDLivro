@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BDLivro.Migrations
 {
     [DbContext(typeof(LivrosContexto))]
-    [Migration("20230301155058_Create")]
+    [Migration("20230309170901_Create")]
     partial class Create
     {
         /// <inheritdoc />
@@ -32,14 +32,14 @@ namespace BDLivro.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Apagado")
-                        .HasColumnType("bit");
-
                     b.Property<string>("NomeAutor")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.ToTable("Autor");
                 });
@@ -52,11 +52,8 @@ namespace BDLivro.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<bool>("Apagado")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("AutorId")
-                        .HasColumnType("decimal(6, 2)");
+                    b.Property<int>("AutorId")
+                        .HasColumnType("int");
 
                     b.Property<int>("isbn")
                         .HasColumnType("int");
@@ -66,7 +63,7 @@ namespace BDLivro.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("precoLivro")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(6, 2)");
 
                     b.HasKey("ID");
 

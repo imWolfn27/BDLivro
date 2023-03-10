@@ -16,8 +16,7 @@ namespace BDLivro.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NomeAutor = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Apagado = table.Column<bool>(type: "bit", nullable: false)
+                    NomeAutor = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,9 +31,8 @@ namespace BDLivro.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     isbn = table.Column<int>(type: "int", nullable: false),
                     nomeLivro = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    precoLivro = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    AutorId = table.Column<decimal>(type: "int", nullable: false),
-                    Apagado = table.Column<bool>(type: "bit", nullable: false)
+                    precoLivro = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
+                    AutorId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,6 +44,12 @@ namespace BDLivro.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Autor_Id",
+                table: "Autor",
+                column: "Id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Livros_AutorId",

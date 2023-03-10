@@ -7,38 +7,47 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BDLivro.Data;
 using BDLivro.Models;
+using BDLivro.DTO;
+using BDLivro.DTO.AutorDTO;
 
 namespace BDLivro.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/AutorDTOes")]
     [ApiController]
-    public class AutorDTOesControllerTeste : ControllerBase
+    public class AutorDTOesController : ControllerBase
     {
         private readonly LivrosContexto _context;
 
-        public AutorDTOesControllerTeste(LivrosContexto context)
+        public AutorDTOesController(LivrosContexto context)
         {
             _context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Autor>>> GetAutor()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+
+        public async Task<ActionResult<IEnumerable<GetAutorDTO>>> GetAutor()
         {
-          if (_context.Autor == null)
-          {
-              return NotFound();
-          }
-            return await _context.Autor.ToListAsync();
+            //Vai buscar as tables do GetAutorDTO e faz a transformação da entidade para construtor/construtoe para entidade
+            var Authors = await _context.Autor.ToListAsync();
+            var dtoAuthors = Authors.Select(t => new GetAutorDTO(t.Id, t.NomeAutor)).ToList();
+            
+            return dtoAuthors;
         }
 
-        [HttpGet("{ID}", Name = "GetAutor" )]
-        public async Task<ActionResult<Autor>> GetAutor(int ID)
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<Autor> GetAutor(int id)
         {
-            if (ID == 0)
-            {
-                return BadRequest();
-            }
-            var autor = AutorData.autorList.FirstOrDefault(u => u.Id == ID);
+            var autor = _context.Autor.Find(id);
+
+            //if (autor == 0)
+            //{
+            //    return BadRequest();
+            //}
+            //var autor = AutorData.autorList.FirstOrDefault(u => u.Id == id);
 
             if (autor == null)
             {
@@ -48,17 +57,23 @@ namespace BDLivro.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAutorDTO(int id, Autor autor)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
+        public async Task<IActionResult> UpdateAutor(int id, [FromBody]UpdateAutorDTO autorNome)
         {
-            if (id != autor.Id)
+            var autor = await _context.Autor.FindAsync(id);
+
+            if (autor == null)
             {
                 return BadRequest();
             }
-
+            autor.NomeAutor = autorNome.NomeAutor;
             _context.Entry(autor).State = EntityState.Modified;
 
             try
             {
+                _context.Autor.Update(autor);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -76,32 +91,40 @@ namespace BDLivro.Controllers
             return NoContent();
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Autor>> PostAutor(Autor autor)
+        [HttpPost("CreateAutor")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<Autor>> CreateAutor(CreateAutorDTO autor)
         {
           if (_context.Autor == null)
           {
-              return Problem("Entity set 'LivrosContexto.Autor'  is null.");
+              return Problem("Entity set 'LivrosContexto.Autor' is null.");
           }
-            _context.Autor.Add(autor);
+            var Entity = autor.toEntity();
+            _context.Autor.Add(Entity);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAutorDTO", new { id = autor.Id }, autor);
+            return CreatedAtAction("GetAutor", new { id = Entity.Id }, autor);
         }
 
+        
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAutor(int id, Autor autor)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteAutor(int id)
         {
             if (_context.Autor == null)
             {
                 return NotFound();
             }
-            var autorDTO = await _context.Autor.FindAsync(id);
-            if (autorDTO == null)
+            var autor = await _context.Autor.FindAsync(id);
+            if (autor == null)
             {
                 return NotFound();
             }
-
+                      
             _context.Autor.Remove(autor);
             await _context.SaveChangesAsync();
 

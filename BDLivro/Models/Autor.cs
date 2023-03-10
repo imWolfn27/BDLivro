@@ -6,13 +6,13 @@ namespace BDLivro.Models
 {
     public class Autor
     {
-        [Key]
+        
         public int Id { get; set; } 
 
-        [Required]
-        public string? NomeAutor { get; set; }
+        
+        public string NomeAutor { get; set; }
 
-        public ICollection<Livros> Livro { get; set; }
+        public ICollection<Livros> Livros { get; set; }
 
 
         //[DefaultValue(false)]
